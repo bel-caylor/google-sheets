@@ -17,19 +17,19 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
 2. Optional: remove the origin or point it at a fresh repo (`git remote remove origin` / `git remote set-url origin <new repo>`).
 3. Run `npm install` to pull dependencies and `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId`.
 
-## Setting up Google Sheets + Apps Script
-1. In Google Sheets, create or open the spreadsheet you want to bind.
-2. Open **Extensions -> Apps Script**, replace the project contents with the code from this repo (via `npm run build && npx clasp push`).
-3. In the Apps Script editor, run `runInitialSetup` once to create the starter tabs defined in `src/constants.ts`.
-4. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL?you will need it for standalone builds or the Cloudflare proxy.
-5. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
-
 ## Using an existing spreadsheet
 Already have a sheet with tabs/headers set up?
 1. Bind this project to that spreadsheet (open the sheet, Extensions -> Apps Script, run `npm run build && npx clasp push`).
 2. In the Apps Script console run `logAllSheetHeaders()` (from `src/util/sheets.ts`) to dump the current tab names and headers. Copy those arrays into `src/constants.ts` under `SHEET_SCHEMAS`.
 3. Update any other constants to match your sheet (column names, IDs).
-4. Skip `runInitialSetup()`?your headers already match. Future clones can now run the initializer to recreate the exact same structure elsewhere.
+4. Skip `runInitialSetup()`--your headers already match. Future clones can now run the initializer to recreate the exact same structure elsewhere.
+
+## Setting up Google Sheets + Apps Script
+1. In Google Sheets, create or open the spreadsheet you want to bind.
+2. Open **Extensions -> Apps Script**, replace the project contents with the code from this repo (via `npm run build && npx clasp push`).
+3. If you already mirrored an existing sheet schema (see "Using an existing spreadsheet"), skip this step; otherwise run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts`.
+4. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL--you will need it for standalone builds or the Cloudflare proxy.
+5. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
 
 ## Getting started
 1. `cd google-sheets && npm install`
@@ -72,8 +72,11 @@ Set the `APPS_SCRIPT_BASE` repository secret to your Cloudflare Worker (or direc
 
 ## Security tips
 - Never commit secrets; rely on Script Properties or Worker secrets.
+- Populate `ALLOWED_EDITOR_EMAILS` in `src/constants.ts` and set the `EDITOR_SHARED_SECRET` Script Property to turn on the sample shared-secret editor gate.
 - If the standalone UI is public, add a lightweight bearer token (or origin check) in `src/http.ts`/`src/rpc.ts` before executing mutating calls.
 - The Cloudflare proxy can also enforce an origin allowlist via `ALLOWED_ORIGINS`.
+
+The sample view exposes a minimal "Editor access" panel so non-Sheets users can supply their email + shared code before saving data. Emails are stored in `localStorage` for convenience while the shared code is cleared after each save. Extend `requireEditor()` in `src/auth.ts` if you need per-user secrets or tighter policies.
 
 ## Customizing the template
 - Update `src/constants.ts` with sheet names/columns for your project. Add entries to `SHEET_SCHEMAS` so `runInitialSetup()` knows what to create.
@@ -93,4 +96,4 @@ Set the `APPS_SCRIPT_BASE` repository secret to your Cloudflare Worker (or direc
 ## Notes
 - Secrets (API keys, spreadsheet IDs) should live in Script Properties. `SPREADSHEET_ID` defaults to the bound spreadsheet when empty.
 - Feel free to remove modules you don't need (watch tasks, standalone build) if you're aiming for a lighter scaffold.
-- The template intentionally keeps TypeScript for server code—it gives you typing for Sheets, RPC payloads, and IDE hints.
+- The template intentionally keeps TypeScript for server code--it gives you typing for Sheets, RPC payloads, and IDE hints.

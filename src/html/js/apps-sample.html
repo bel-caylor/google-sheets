@@ -3,6 +3,15 @@
     const ctx = window.APP_CTX || {};
     const defaults = Object.assign({ date: '', title: '', notes: '' }, ctx.sampleFormDefaults || {});
     const initial = Array.isArray(window.__SAMPLE__) ? window.__SAMPLE__ : [];
+    const storageKey = 'gsheets-editor-email';
+    const storedEmail = (() => {
+      try {
+        return window.localStorage ? window.localStorage.getItem(storageKey) || '' : '';
+      } catch (_) {
+        return '';
+      }
+    })();
+    const editorHint = ctx.authHint || 'Enter the email + shared code your admin provided.';
 
     const normalize = (row) => ({
       date: row?.date || '',
@@ -15,6 +24,8 @@
       form: Object.assign({}, defaults),
       loading: false,
       tips: Array.isArray(ctx.sampleTips) ? ctx.sampleTips : [],
+      auth: { email: storedEmail, secret: '' },
+      authHint: editorHint,
       init() {
         if (!this.entries.length) {
           this.fetchEntries();
@@ -40,19 +51,51 @@
           notify('Title is required.', 'error');
           return;
         }
+        const auth = this.requireEditorAuth();
         this.loading = true;
         try {
-          const payload = { ...this.form };
+          const payload = { ...this.form, auth };
           const rows = await callRpc('saveSampleEntry', payload);
           this.entries = Array.isArray(rows) ? rows.map(normalize) : [];
           notify('Sample entry saved', 'success');
           this.resetForm();
+          this.auth.secret = '';
         } catch (err) {
           console.error(err);
           notify(err.message || 'Save failed', 'error');
         } finally {
           this.loading = false;
         }
+      },
+      persistEditorEmail() {
+        try {
+          if (window.localStorage) {
+            window.localStorage.setItem(storageKey, this.auth.email || '');
+          }
+          notify('Editor email saved locally', 'success');
+        } catch (err) {
+          console.error(err);
+        }
+      },
+      clearEditorEmail() {
+        this.auth.email = '';
+        this.auth.secret = '';
+        try {
+          window.localStorage?.removeItem(storageKey);
+        } catch (_) {}
+      },
+      requireEditorAuth() {
+        const email = String(this.auth.email || '').trim();
+        const secret = String(this.auth.secret || '').trim();
+        if (!email) {
+          notify('Enter your editor email first.', 'error');
+          throw new Error('Missing email');
+        }
+        if (!secret) {
+          notify('Enter the shared editor code.', 'error');
+          throw new Error('Missing secret');
+        }
+        return { email, secret };
       }
     };
   }

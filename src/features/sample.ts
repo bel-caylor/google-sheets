@@ -1,10 +1,12 @@
 import { SHEET_NAMES, SAMPLE_HEADERS, SampleRow } from '../constants';
+import { requireEditor, EditorAuth } from '../auth';
 import { ensureSheet, readRows, setHeaders, appendRow } from '../util/sheets';
 
 type SampleInput = {
   date?: string;
   title?: string;
   notes?: string;
+  auth?: EditorAuth;
 };
 
 const headerIndex = SAMPLE_HEADERS.reduce<Record<string, number>>((acc, header, idx) => {
@@ -42,6 +44,7 @@ export function listSampleEntries(): SampleRow[] {
 }
 
 export function saveSampleEntry(input: SampleInput): SampleRow[] {
+  requireEditor(input?.auth);
   const sheet = ensureSampleSheet();
   const payload: (string | number)[] = [
     input.date || new Date().toISOString().slice(0, 10),

@@ -17,6 +17,24 @@
     </div>
   </header>
 
+  <section class="panel panel--padded space-y-3">
+    <div class="flex flex-col gap-3 md:flex-row md:items-end">
+      <label class="flex-1 space-y-1">
+        <span class="text-sm font-medium text-gray-700">Editor email</span>
+        <input type="email" class="form-control" placeholder="you@example.com" x-model="auth.email" />
+      </label>
+      <label class="flex-1 space-y-1">
+        <span class="text-sm font-medium text-gray-700">Shared editor code</span>
+        <input type="password" class="form-control" placeholder="••••••" x-model="auth.secret" />
+      </label>
+      <div class="flex flex-col gap-2 md:w-auto">
+        <button type="button" class="btn btn--outline" @click="persistEditorEmail()">Remember email</button>
+        <button type="button" class="btn btn--muted" @click="clearEditorEmail()">Clear</button>
+      </div>
+    </div>
+    <p class="text-sm text-gray-500" x-text="authHint"></p>
+  </section>
+
   <div class="grid gap-4 lg:grid-cols-3">
     <form class="panel panel--padded space-y-3 lg:col-span-1" @submit.prevent="saveEntry()">
       <label class="block space-y-1">

@@ -10,6 +10,8 @@ export const SHEET_SCHEMAS = [
   { name: SHEET_NAMES.SAMPLE, headers: SAMPLE_HEADERS }
 ];
 
+export const ALLOWED_EDITOR_EMAILS: string[] = [];
+
 export type SampleRow = {
   date: string;
   title: string;
