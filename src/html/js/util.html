@@ -1,0 +1,59 @@
+<script>
+  function callRpc(method, payload) {
+    return new Promise((resolve, reject) => {
+      const runner = (window.google && google.script && google.script.run) || null;
+      if (runner && runner.rpc) {
+        runner
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          .rpc({ method, payload });
+        return;
+      }
+
+      const base = String(window.__BASE__ || '').replace(/\/+$/, '');
+      if (!base) {
+        reject(new Error('RPC endpoint is not configured.'));
+        return;
+      }
+
+      fetch(`${base}/exec`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ method, payload })
+      })
+        .then(async (res) => {
+          const json = await res.json().catch(() => { throw new Error('Invalid RPC response'); });
+          if (json && json.ok === false) throw new Error(json.error || 'RPC failed');
+          return json && Object.prototype.hasOwnProperty.call(json, 'data') ? json.data : json;
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  function notify(message, type = 'info', ms = 2200) {
+    const el = document.createElement('div');
+    el.textContent = String(message ?? '');
+    el.style.position = 'fixed';
+    el.style.right = '16px';
+    el.style.bottom = '16px';
+    el.style.zIndex = '9999';
+    el.style.padding = '10px 14px';
+    el.style.borderRadius = '6px';
+    el.style.color = '#0f172a';
+    el.style.background = type === 'error' ? '#fecdd3' : type === 'success' ? '#bbf7d0' : '#e2e8f0';
+    el.style.boxShadow = '0 6px 18px rgba(15,23,42,0.18)';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), ms);
+  }
+
+  function openAdminLogin() {
+    const target = window.__ADMIN_BASE__ || window.__BASE__ || window.location.href;
+    window.open(target, 'apps-script-admin');
+  }
+
+  window.callRpc = callRpc;
+  window.notify = notify;
+  window.openAdminLogin = openAdminLogin;
+</script>

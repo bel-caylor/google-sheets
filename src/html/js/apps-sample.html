@@ -1,0 +1,59 @@
+<script>
+  function sampleApp() {
+    const ctx = window.APP_CTX || {};
+    const defaults = Object.assign({ date: '', title: '', notes: '' }, ctx.sampleFormDefaults || {});
+    const initial = Array.isArray(window.__SAMPLE__) ? window.__SAMPLE__ : [];
+
+    const normalize = (row) => ({
+      date: row?.date || '',
+      title: row?.title || row?.Title || '',
+      notes: row?.notes || row?.Notes || ''
+    });
+
+    return {
+      entries: initial.map(normalize),
+      form: Object.assign({}, defaults),
+      loading: false,
+      tips: Array.isArray(ctx.sampleTips) ? ctx.sampleTips : [],
+      init() {
+        if (!this.entries.length) {
+          this.fetchEntries();
+        }
+      },
+      resetForm() {
+        this.form = Object.assign({}, defaults);
+      },
+      async fetchEntries() {
+        this.loading = true;
+        try {
+          const rows = await callRpc('listSampleEntries', null);
+          this.entries = Array.isArray(rows) ? rows.map(normalize) : [];
+        } catch (err) {
+          console.error(err);
+          notify(err.message || 'Failed to load entries', 'error');
+        } finally {
+          this.loading = false;
+        }
+      },
+      async saveEntry() {
+        if (!this.form.title) {
+          notify('Title is required.', 'error');
+          return;
+        }
+        this.loading = true;
+        try {
+          const payload = { ...this.form };
+          const rows = await callRpc('saveSampleEntry', payload);
+          this.entries = Array.isArray(rows) ? rows.map(normalize) : [];
+          notify('Sample entry saved', 'success');
+          this.resetForm();
+        } catch (err) {
+          console.error(err);
+          notify(err.message || 'Save failed', 'error');
+        } finally {
+          this.loading = false;
+        }
+      }
+    };
+  }
+</script>

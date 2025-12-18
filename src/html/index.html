@@ -1,0 +1,44 @@
+<!doctype html>
+<html class="h-full">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Sheets Starter</title>
+
+  <?!= HtmlService.createHtmlOutputFromFile('styles').getContent(); ?>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <script id="sample-data" type="application/json">
+    <?!= JSON.stringify(sampleData || []).replace(/<\//g, '<\\/') ?>
+  </script>
+  <script>
+    const parseJson = (raw, fallback) => {
+      if (!raw || /<\?!=/.test(raw)) return fallback;
+      try { return JSON.parse(raw); }
+      catch (_) { return fallback; }
+    };
+    const sampleEl = document.getElementById('sample-data');
+    window.__SAMPLE__ = parseJson(sampleEl && sampleEl.textContent, []);
+
+    const baseTemplate = `<?!= JSON.stringify(typeof baseUrl !== 'undefined' ? baseUrl : '') ?>`;
+    const adminTemplate = `<?!= JSON.stringify(typeof adminBase !== 'undefined' ? adminBase : '') ?>`;
+    window.__BASE__ = parseJson(baseTemplate, '') || `${location.origin}${location.pathname}`;
+    window.__ADMIN_BASE__ = parseJson(adminTemplate, '') || window.__BASE__;
+  </script>
+
+  <?!= HtmlService.createHtmlOutputFromFile('util').getContent(); ?>
+  <?!= HtmlService.createHtmlOutputFromFile('context').getContent(); ?>
+  <?!= HtmlService.createHtmlOutputFromFile('apps-sample').getContent(); ?>
+</head>
+
+<body class="min-h-screen bg-gray-50">
+  <main class="min-h-screen flex flex-col">
+    <div class="flex-1 min-h-0">
+      <?!= HtmlService.createHtmlOutputFromFile('sample-view').getContent(); ?>
+    </div>
+  </main>
+</body>
+
+</html>

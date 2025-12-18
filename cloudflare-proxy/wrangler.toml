@@ -1,0 +1,7 @@
+name = "gsheets-proxy-template"
+main = "src/index.ts"
+compatibility_date = "2024-10-21"
+
+[vars]
+# Comma-separated allowlist. Leave empty to bounce the request origin back.
+ALLOWED_ORIGINS = ""

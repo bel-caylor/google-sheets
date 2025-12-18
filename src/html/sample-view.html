@@ -1,0 +1,74 @@
+<section x-data="sampleApp()" x-init="init()" class="h-full flex flex-col gap-4 p-4 overflow-y-auto">
+  <header class="panel panel--padded">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div>
+        <p class="text-sm text-gray-500">Sample module</p>
+        <h2 class="text-xl font-semibold text-gray-900">Sheet-backed entries</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" class="btn btn--ghost-primary" @click="fetchEntries()" :disabled="loading">
+          <span x-show="!loading">Refresh</span>
+          <span x-show="loading">Loading...</span>
+        </button>
+        <button type="button" class="btn btn--primary" @click="saveEntry()" :disabled="loading">
+          Save Entry
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid gap-4 lg:grid-cols-3">
+    <form class="panel panel--padded space-y-3 lg:col-span-1" @submit.prevent="saveEntry()">
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-gray-700">Date</span>
+        <input type="date" class="form-control" x-model="form.date" required />
+      </label>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-gray-700">Title</span>
+        <input type="text" class="form-control" placeholder="Choir rehearsal" x-model="form.title" required />
+      </label>
+      <label class="block space-y-1">
+        <span class="text-sm font-medium text-gray-700">Notes</span>
+        <textarea class="form-control form-control--textarea" rows="4" x-model="form.notes" placeholder="Any details go here"></textarea>
+      </label>
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn--primary" :disabled="loading">
+          <span x-show="!loading">Add Entry</span>
+          <span x-show="loading">Saving...</span>
+        </button>
+        <button type="button" class="btn btn--muted" @click="resetForm()" :disabled="loading">Reset</button>
+      </div>
+      <p class="text-muted text-sm">This form mirrors how you might collect data for any Sheet. Replace it with your project UI.</p>
+    </form>
+
+    <div class="panel panel--padded lg:col-span-2 flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold">Entries</h3>
+        <span class="text-sm text-gray-500" x-text="entries.length ? `${entries.length} total` : 'No entries yet'"></span>
+      </div>
+      <template x-if="!entries.length">
+        <p class="text-sm text-gray-500">Use the form to add your first row. The data persists in the bound Google Sheet.</p>
+      </template>
+      <ul class="space-y-2" x-cloak>
+        <template x-for="entry in entries" :key="entry.date + entry.title">
+          <li class="border rounded-md p-3 flex flex-col gap-1 bg-white">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-gray-900" x-text="entry.title"></p>
+              <span class="text-xs text-gray-500" x-text="entry.date"></span>
+            </div>
+            <p class="text-sm text-gray-700" x-text="entry.notes || 'No notes provided.'"></p>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+
+  <aside class="panel panel--padded">
+    <h4 class="text-base font-semibold mb-2">Tips</h4>
+    <ul class="list-disc pl-5 space-y-1">
+      <template x-for="tip in tips" :key="tip">
+        <li class="text-sm text-gray-700" x-text="tip"></li>
+      </template>
+    </ul>
+  </aside>
+</section>

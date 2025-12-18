@@ -1,0 +1,18 @@
+<script>
+  // Client-only defaults shared across Alpine apps.
+  window.APP_CTX = {
+    sampleFormDefaults: {
+      date: new Date().toISOString().slice(0, 10),
+      title: 'Sunday Gathering',
+      notes: ''
+    },
+    sampleTips: [
+      'Duplicate sampleApp() to create new modules.',
+      'Store constants here instead of scattering throughout views.',
+      'Merge Sheet-driven data on init() using callRpc().' 
+    ],
+    links: {
+      docs: 'https://github.com/google/clasp'
+    }
+  };
+</script>
