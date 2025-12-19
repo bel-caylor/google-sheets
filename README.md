@@ -1,6 +1,6 @@
 # Google Sheets Apps Script Template
 
-Starter repo for building Google Sheets backed web apps with Apps Script + Alpine.js. It mirrors the `worship-plan-ts` tooling (esbuild bundling, Tailwind CSS, RPC switch) but ships with a single sample view/app so you can plug in your own modules.
+Starter repo for building Google Sheets backed web apps with Apps Script + Alpine.js. The tooling is esbuild bundling, Tailwind CSS, RPC switch and ships with a single sample view/app so you can plug in your own modules.
 
 ## What's inside
 - **Apps Script backend** in `src/*.ts` bundled into `dist/Code.gs` via esbuild.
@@ -12,31 +12,24 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
   - `runInitialSetup()` (Apps Script) creates sheets/headers defined in `src/constants.ts` so you can start from a blank spreadsheet.
 - **Standalone build** path (`npm run build:standalone`) for hosting outside the Apps Script iframe if needed.
 
-## Cloning into a new project
-1. Create a new directory and clone the template: `git clone <this repo> my-project && cd my-project`.
-2. Optional: remove the origin or point it at a fresh repo (`git remote remove origin` / `git remote set-url origin <new repo>`).
-3. Run `npm install` to pull dependencies and `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId`.
-
-## Using an existing spreadsheet
-Already have a sheet with tabs/headers set up?
-1. Bind this project to that spreadsheet (open the sheet, Extensions -> Apps Script, run `npm run build && npx clasp push`).
-2. In the Apps Script console run `logAllSheetHeaders()` (from `src/util/sheets.ts`) to dump the current tab names and headers. Copy those arrays into `src/constants.ts` under `SHEET_SCHEMAS`.
-3. Update any other constants to match your sheet (column names, IDs).
-4. Skip `runInitialSetup()`--your headers already match. Future clones can now run the initializer to recreate the exact same structure elsewhere.
-
-## Setting up Google Sheets + Apps Script
-1. In Google Sheets, create or open the spreadsheet you want to bind.
-2. Open **Extensions -> Apps Script**, replace the project contents with the code from this repo (via `npm run build && npx clasp push`).
-3. If you already mirrored an existing sheet schema (see "Using an existing spreadsheet"), skip this step; otherwise run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts`.
-4. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL--you will need it for standalone builds or the Cloudflare proxy.
-5. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
-
-## Getting started
-1. `cd google-sheets && npm install`
-2. `npm run bootstrap` and supply your Apps Script `scriptId` (skip if `.clasp.json` already configured).
-3. `npm run build && npx clasp push` to upload the backend + HTML files.
-4. Run the `runInitialSetup` function from the Apps Script editor (or choose **Template -> Initialize Sheets** from the custom menu in the bound sheet) to create the starter tabs/headers.
-5. Deploy the Web App (Deploy -> Test deployments or Web App) and start iterating.
+## End-to-end setup workflow
+1. **Clone & install locally**
+   1. `git clone <this repo> my-project && cd my-project`.
+   2. Optional: remove the origin or point it at a fresh repo (`git remote remove origin` / `git remote set-url origin <new repo>`).
+   3. `npm install` to pull dependencies.
+2. **Prepare your sheet schema**
+   1. If you already have a spreadsheet with tabs/headers:
+      - After you push the code in step 3, open that sheet's Apps Script project (Extensions -> Apps Script) and run `logAllSheetHeaders()` from `src/util/sheets.ts`.
+      - Copy the tab/header arrays into `src/constants.ts` under `SHEET_SCHEMAS`, and update any other constants (column names, IDs) to match.
+      - You will skip `runInitialSetup()` later because the sheet already matches your schema.
+   2. If you're starting from a blank sheet, make sure `SHEET_SCHEMAS` reflects the tabs/headers you want `runInitialSetup()` to create.
+3. **Bind & deploy to Apps Script**
+   1. Run `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId` (skip if it already exists).
+   2. Run `npm run build && npx clasp push` to upload the backend + HTML bundle (rerun this whenever you need to push updates).
+   3. In Google Sheets, create or open the spreadsheet you want to bind, then open **Extensions -> Apps Script** to confirm the pushed code is present.
+   4. Run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts` (skip this if you mirrored an existing sheet in step 2).
+   5. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL; you'll need it for standalone builds or the Cloudflare proxy.
+   6. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
 
 ## Stack overview
 1. **Google Sheet** holds the source data that powers the UI.
