@@ -33,7 +33,7 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
    3. In Google Apps Script, (**Google Sheets -> Extensions -> Apps Script**) confirm the pushed code is present.
    4. **Skip this if you started with a spreadsheet with tabs/headers in step 2**,  
    run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts`.  
-   ![runInitalSetup](google-sheets\docs\runInitialSetup.png)
+   ![runInitalSetup](\docs\runInitialSetup.png)
    5. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL; you'll need it for standalone builds or the Cloudflare proxy.
    6. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
    7. Open the 'Editor Access' tab in your sheet and add one email per row (column `Email`) for each person allowed to save data from the UI.
