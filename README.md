@@ -21,15 +21,18 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
    1. If you already have a spreadsheet with tabs/headers:
       - After you push the code in step 3, open that sheet's Apps Script project (Extensions -> Apps Script) and run `logAllSheetHeaders()` from `src/util/sheets.ts`.
       - Copy the tab/header arrays into `src/constants.ts` under `SHEET_SCHEMAS`, and update any other constants (column names, IDs) to match.
+      - Include a tab named 'Editor Access' with an `Email` column so the editor allowlist can live in the sheet.
       - You will skip `runInitialSetup()` later because the sheet already matches your schema.
-   2. If you're starting from a blank sheet, make sure `SHEET_SCHEMAS` reflects the tabs/headers you want `runInitialSetup()` to create.
+   2. If you're starting from a blank sheet, make sure `SHEET_SCHEMAS` in `src/constants.ts` reflects the tabs/headers you want `runInitialSetup()` to create.
 3. **Bind & deploy to Apps Script**
-   1. Run `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId` (skip if it already exists).
-   2. Run `npm run build && npx clasp push` to upload the backend + HTML bundle (rerun this whenever you need to push updates).
-   3. In Google Sheets, create or open the spreadsheet you want to bind, then open **Extensions -> Apps Script** to confirm the pushed code is present.
-   4. Run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts` (skip this if you mirrored an existing sheet in step 2).
+   1. Run `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId` (This is the code behind /projects/ in the Apps Script URL).
+   2. Run `npm run deploy` to upload the backend + HTML bundle (**rerun this whenever you need to push updates**).
+   3. In Google Apps Script, (**Google Sheets -> Extensions -> Apps Script**) confirm the pushed code is present.
+   4. Skip this if you mirrored an existing sheet in step 2, 
+   run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts` .
    5. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL; you'll need it for standalone builds or the Cloudflare proxy.
    6. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
+   7. Open the 'Editor Access' tab in your sheet and add one email per row (column `Email`) for each person allowed to save data from the UI.
 
 ## Stack overview
 1. **Google Sheet** holds the source data that powers the UI.
@@ -65,7 +68,7 @@ Set the `APPS_SCRIPT_BASE` repository secret to your Cloudflare Worker (or direc
 
 ## Security tips
 - Never commit secrets; rely on Script Properties or Worker secrets.
-- Populate `ALLOWED_EDITOR_EMAILS` in `src/constants.ts` and set the `EDITOR_SHARED_SECRET` Script Property to turn on the sample shared-secret editor gate.
+- Keep the 'Editor Access' sheet updated (one email per row) and set the `EDITOR_SHARED_SECRET` Script Property to turn on the shared-secret editor gate.
 - If the standalone UI is public, add a lightweight bearer token (or origin check) in `src/http.ts`/`src/rpc.ts` before executing mutating calls.
 - The Cloudflare proxy can also enforce an origin allowlist via `ALLOWED_ORIGINS`.
 
