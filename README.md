@@ -14,8 +14,8 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
 
 ## End-to-end setup workflow
 1. **Clone & install locally**
-   1. `git clone <this repo> my-project && cd my-project`.
-   2. Optional: remove the origin or point it at a fresh repo (`git remote remove origin` / `git remote set-url origin <new repo>`).
+   1. On GitHub, click **Use this template**.
+   2. Clone your copy: `git clone https://github.com/<your-user>/<your-repo>.git my-project && cd my-project`.  
    3. `npm install` to pull dependencies.
 2. **Prepare your sheet schema**
    1. If you already have a spreadsheet with tabs/headers:
@@ -28,7 +28,7 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
    1. Run `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId` (This is the code behind /projects/ in the Apps Script URL).
    2. Run `npm run deploy` to upload the backend + HTML bundle (**rerun this whenever you need to push updates**).
    3. In Google Apps Script, (**Google Sheets -> Extensions -> Apps Script**) confirm the pushed code is present.
-   4. Skip this if you mirrored an existing sheet in step 2, 
+   4. Skip this if you mirrored an existing sheet in step 2,  
    run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts` .
    5. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL; you'll need it for standalone builds or the Cloudflare proxy.
    6. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
