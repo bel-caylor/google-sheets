@@ -14,8 +14,10 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
 
 ## End-to-end setup workflow
 1. **Clone & install locally**
-   1. On GitHub, click **Use this template**.
-   2. Clone your copy: `git clone https://github.com/<your-user>/<your-repo>.git my-project && cd my-project`.  
+   1. On GitHub, click **Use this template**, fill in the new repository name/owner, and create it.
+   2. Open a terminal, `cd` into the parent folder where you keep projects (e.g., `~/code` or `C:\dev`), then clone and enter the repo:  
+      `git clone https://github.com/<your-user>/<your-repo>.git my-project`  
+      `cd my-project`  
    3. `npm install` to pull dependencies.
 2. **Prepare your sheet schema**
    1. If you already have a spreadsheet with tabs/headers:
@@ -25,11 +27,13 @@ Starter repo for building Google Sheets backed web apps with Apps Script + Alpin
       - You will skip `runInitialSetup()` later because the sheet already matches your schema.
    2. If you're starting from a blank sheet, make sure `SHEET_SCHEMAS` in `src/constants.ts` reflects the tabs/headers you want `runInitialSetup()` to create.
 3. **Bind & deploy to Apps Script**
-   1. Run `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId` (This is the code behind /projects/ in the Apps Script URL).
-   2. Run `npm run deploy` to upload the backend + HTML bundle (**rerun this whenever you need to push updates**).
+   1. Run `npm run bootstrap` to create `.clasp.json` with your Apps Script `scriptId`.
+   2. Run `npm run deploy` to upload the backend + HTML bundle  
+   (**rerun this whenever you need to push updates**).
    3. In Google Apps Script, (**Google Sheets -> Extensions -> Apps Script**) confirm the pushed code is present.
-   4. Skip this if you mirrored an existing sheet in step 2,  
-   run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts` .
+   4. **Skip this if you started with a spreadsheet with tabs/headers in step 2**,  
+   run `runInitialSetup` once in the Apps Script editor to create the starter tabs defined in `src/constants.ts`.  
+   ![runInitalSetup](google-sheets\docs\runInitialSetup.png)
    5. Deploy a Web App (Execute as you, Anyone with link) and copy the deployment URL; you'll need it for standalone builds or the Cloudflare proxy.
    6. Add any required Script Properties (API tokens, spreadsheet IDs) via **Project Settings -> Script properties**.
    7. Open the 'Editor Access' tab in your sheet and add one email per row (column `Email`) for each person allowed to save data from the UI.
